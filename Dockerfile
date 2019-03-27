@@ -1,4 +1,4 @@
-FROM node:4.8-slim
+FROM node:8-slim
 
 # FROM https://github.com/docker-library/python/blob/a736fc19a99afe3d77ba108263aad53bd1b9ab65/2.7/slim/Dockerfile
 # http://bugs.python.org/issue19846
@@ -8,13 +8,16 @@ ENV LANG C.UTF-8
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates \
 		libsqlite3-0 \
-		libssl1.0.0 \
+		libssl-dev \
 	&& rm -rf /var/lib/apt/lists/*
 
-ENV PYTHON_VERSION 2.7.13
+ENV PYTHON_VERSION 2.7.16
 
+RUN wget https://www.python.org/static/files/pubkeys.txt
 # gpg: key 18ADD4FF: public key "Benjamin Peterson <benjamin@python.org>" imported
-RUN gpg --keyserver pool.sks-keyservers.net --recv-keys C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF
+RUN gpg --import pubkeys.txt
+
+RUN rm pubkeys.txt
 
 RUN set -x \
 	&& buildDeps='curl gcc libbz2-dev libc6-dev libsqlite3-dev libssl-dev make xz-utils zlib1g-dev' \
